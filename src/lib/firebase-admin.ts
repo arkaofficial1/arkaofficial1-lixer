@@ -1,18 +1,22 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-// This file is now primarily for non-Genkit server-side code.
-// The main initialization logic has been moved to the Genkit flow and redirect page
-// to ensure credentials are available in their respective environments.
+// This file centralizes Firebase Admin SDK initialization.
+// It handles initialization for different environments (Next.js server vs. Genkit flows).
 
 if (!getApps().length) {
   try {
+    // This environment variable is set in Firebase Studio and used by Genkit.
     if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
       initializeApp({
         credential: cert(JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY))
       });
-    } else {
+      console.log("Firebase Admin initialized with GCP_SERVICE_ACCOUNT_KEY.");
+    } 
+    // This is the default for Google Cloud environments like App Hosting.
+    else {
       initializeApp();
+      console.log("Firebase Admin initialized with default credentials.");
     }
   } catch (error) {
     console.error("Firebase Admin Initialization Error:", error);
