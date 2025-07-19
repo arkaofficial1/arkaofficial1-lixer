@@ -66,7 +66,7 @@ export function HomeClient({ translations }: HomeClientProps) {
 
   const handleCopy = () => {
     if (!shortUrl) return;
-    navigator.clipboard.writeText(`https://${shortUrl}`);
+    navigator.clipboard.writeText(shortUrl);
     toast({
       title: translations.copySuccessTitle,
       description: translations.copySuccessDescription,
