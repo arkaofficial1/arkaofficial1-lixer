@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Table,
   TableBody,
@@ -12,6 +14,8 @@ import { Copy, Edit, Trash2, BarChart2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { db } from '@/lib/firebase-admin';
 import { format } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Link {
     id: string;
@@ -66,11 +70,26 @@ async function getLinks(): Promise<Link[]> {
 }
 
 
-export default async function DashboardPage() {
-  const links = await getLinks();
-  // Ensure NEXT_PUBLIC_BASE_URL is set in your environment variables for production
-  // For local dev, we can construct it.
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'localhost:9002';
+export default function DashboardPage() {
+  const [links, setLinks] = useState<Link[]>([]);
+  const [baseUrl, setBaseUrl] = useState('');
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Fetch links on component mount
+    getLinks().then(setLinks);
+    // Set base URL on the client side
+    setBaseUrl(window.location.host);
+  }, []);
+
+  const handleCopy = (shortCode: string) => {
+    const fullUrl = `${baseUrl}/l/${shortCode}`;
+    navigator.clipboard.writeText(fullUrl);
+    toast({
+        title: "Copied!",
+        description: "The shortened link has been copied to your clipboard.",
+    });
+  }
 
   return (
     <div className="container mx-auto py-10 w-full">
@@ -123,7 +142,7 @@ export default async function DashboardPage() {
                       <TableCell className="hidden sm:table-cell">{link.createdAt}</TableCell>
                       <TableCell className="text-right space-x-0">
                         {/* Functionality for these buttons can be added later */}
-                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Copy Link" onClick={() => navigator.clipboard.writeText(`https://${shortUrl}`)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Copy Link" onClick={() => handleCopy(link.shortCode)}>
                           <Copy className="h-4 w-4" />
                         </Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit Link">
