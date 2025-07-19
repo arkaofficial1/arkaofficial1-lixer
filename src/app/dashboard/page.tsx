@@ -48,13 +48,22 @@ async function getLinks(): Promise<Link[]> {
     
     const links: Link[] = snapshot.docs.map(doc => {
         const data = doc.data();
+        const createdAt = data.createdAt;
+        let formattedDate = 'N/A';
+        // Firestore timestamp can be null or a Timestamp object
+        if (createdAt && typeof createdAt.toDate === 'function') {
+           formattedDate = format(createdAt.toDate(), 'yyyy-MM-dd');
+        } else if (createdAt) {
+          // Fallback for string or number dates if any
+           formattedDate = format(new Date(createdAt), 'yyyy-MM-dd');
+        }
+
         return {
             id: doc.id,
             originalUrl: data.originalUrl,
             shortCode: data.shortCode,
             clicks: data.clicks,
-            // Convert Firestore Timestamp to a readable date string
-            createdAt: data.createdAt ? format(data.createdAt.toDate(), 'yyyy-MM-dd') : 'N/A',
+            createdAt: formattedDate,
         };
     });
 
@@ -68,7 +77,8 @@ async function getLinks(): Promise<Link[]> {
 
 export default async function DashboardPage() {
   const links = await getLinks();
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'localhost:9002';
+  // Ensure NEXT_PUBLIC_BASE_URL is set in your environment variables
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.NODE_ENV === 'development' ? 'localhost:9002' : 'your-production-domain.com');
 
   return (
     <div className="container mx-auto py-10 w-full">
@@ -90,7 +100,7 @@ export default async function DashboardPage() {
             </TableHeader>
             <TableBody>
               {links.map((link) => {
-                const shortUrl = `${baseUrl}/${link.shortCode}`;
+                const shortUrl = `${baseUrl}/l/${link.shortCode}`;
                 return (
                   <TableRow key={link.id}>
                     <TableCell className="font-medium truncate max-w-xs hidden md:table-cell">

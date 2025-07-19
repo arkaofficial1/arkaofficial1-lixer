@@ -1,7 +1,7 @@
 import { getFirestore } from 'firebase-admin/firestore';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { redirect } from 'next/navigation';
-import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
+import { FieldValue } from 'firebase-admin/firestore';
 
 // Initialize Firebase Admin SDK
 if (!getApps().length) {
@@ -11,7 +11,6 @@ if (!getApps().length) {
     });
   } else {
     // For local development, it will use application default credentials.
-    // Ensure you've run `gcloud auth application-default login`.
     initializeApp();
   }
 }
@@ -28,7 +27,7 @@ async function getLink(shortCode: string): Promise<string | null> {
       const data = docSnap.data();
       // Atomically increment the click count.
       await linkDocRef.update({
-          clicks: increment(1)
+          clicks: FieldValue.increment(1)
       });
       return data?.originalUrl;
     } else {
@@ -42,11 +41,11 @@ async function getLink(shortCode: string): Promise<string | null> {
 }
 
 
-export default async function ShortCodePage({ params }: { params: { shortCode: string } }) {
+export default async function ShortCodeRedirectPage({ params }: { params: { shortCode: string } }) {
   const { shortCode } = params;
 
-  if (shortCode === 'favicon.ico') {
-    return null;
+  if (!shortCode) {
+    return redirect('/not-found');
   }
 
   const originalUrl = await getLink(shortCode);
@@ -54,8 +53,12 @@ export default async function ShortCodePage({ params }: { params: { shortCode: s
   if (originalUrl) {
     redirect(originalUrl);
   } else {
-    redirect('/not-found');
+    // In a real app, you might want a specific "link not found" page.
+    // For now, we redirect to the main not-found page.
+    return redirect('/not-found');
   }
 
-  return null; // This will not be rendered because of the redirects.
+  // This part is never reached due to the redirects, but it's good practice
+  // to have a return statement.
+  return null;
 }

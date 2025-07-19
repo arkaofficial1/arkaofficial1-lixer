@@ -54,7 +54,8 @@ export function HomeClient({ translations }: HomeClientProps) {
 
     try {
       const result = await shortenUrl({ url: longUrl });
-      const fullShortUrl = `${window.location.host}/${result.shortCode}`;
+      // Add the /l/ prefix for the redirect route
+      const fullShortUrl = `${window.location.host}/l/${result.shortCode}`;
       setShortUrl(fullShortUrl);
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");

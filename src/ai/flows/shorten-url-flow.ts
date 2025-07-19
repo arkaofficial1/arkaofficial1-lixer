@@ -9,6 +9,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 import { getFirestore } from 'firebase-admin/firestore';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { FieldValue } from 'firebase-admin/firestore';
 
 // Initialize Firebase Admin SDK
 if (!getApps().length) {
@@ -53,7 +54,7 @@ const shortenUrlFlow = ai.defineFlow(
     await linkDocRef.set({
       originalUrl: input.url,
       shortCode: shortCode,
-      createdAt: new Date(),
+      createdAt: FieldValue.serverTimestamp(),
       clicks: 0
     });
 
