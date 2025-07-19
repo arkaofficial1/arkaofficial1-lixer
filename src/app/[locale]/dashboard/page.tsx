@@ -12,20 +12,16 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Copy, Edit, Trash2, BarChart2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { db } from '@/lib/firebase-admin';
-import { format } from 'date-fns';
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
-interface Link {
-    id: string;
-    originalUrl: string;
-    shortCode: string;
-    clicks: number;
-    createdAt: string; // We'll format the timestamp to a string
-}
-
+// Moved Firestore logic into a server-side function (Server Action)
+// This function will only run on the server.
 async function getLinks(): Promise<Link[]> {
+  'use server';
+  const { db } = await import('@/lib/firebase-admin');
+  const { format } = await import('date-fns');
+
   try {
     // In the future, we'll filter this by user ID
     const linksCollection = db.collection('links');
@@ -70,20 +66,30 @@ async function getLinks(): Promise<Link[]> {
 }
 
 
+interface Link {
+    id: string;
+    originalUrl: string;
+    shortCode: string;
+    clicks: number;
+    createdAt: string; // We'll format the timestamp to a string
+}
+
 export default function DashboardPage() {
   const [links, setLinks] = useState<Link[]>([]);
   const [baseUrl, setBaseUrl] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
-    // Fetch links on component mount
+    // Fetch links on component mount by calling the server action
     getLinks().then(setLinks);
     // Set base URL on the client side
-    setBaseUrl(window.location.host);
+    if (typeof window !== 'undefined') {
+        setBaseUrl(window.location.host);
+    }
   }, []);
 
   const handleCopy = (shortCode: string) => {
-    const fullUrl = `${baseUrl}/l/${shortCode}`;
+    const fullUrl = `https://${baseUrl}/l/${shortCode}`;
     navigator.clipboard.writeText(fullUrl);
     toast({
         title: "Copied!",
