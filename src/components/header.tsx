@@ -1,4 +1,5 @@
-import Link from 'next-intl/link';
+"use client";
+
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -10,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { usePathname } from 'next-intl/client';
+import { usePathname, Link } from '@/navigation';
 
 
 export function Header() {

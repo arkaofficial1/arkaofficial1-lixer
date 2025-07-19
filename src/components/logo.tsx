@@ -1,5 +1,5 @@
 import { WandSparkles } from 'lucide-react';
-import Link from 'next-intl/link';
+import { Link } from '@/navigation';
 import { cn } from '@/lib/utils';
 
 export function Logo({ className }: { className?: string }) {
