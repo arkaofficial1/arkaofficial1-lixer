@@ -13,7 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Copy, Edit, Trash2, BarChart2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import type { Link } from "./actions";
 import { getLinks } from "./actions";
 
@@ -32,7 +32,7 @@ export default function DashboardPage() {
   }, []);
 
   const handleCopy = (shortCode: string) => {
-    const fullUrl = `https://${baseUrl}/l/${shortCode}`;
+    const fullUrl = `${baseUrl}/l/${shortCode}`;
     navigator.clipboard.writeText(fullUrl);
     toast({
         title: "Copied!",
