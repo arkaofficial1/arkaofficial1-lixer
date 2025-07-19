@@ -10,23 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Copy, Edit, Trash2, BarChart2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { getFirestore } from 'firebase-admin/firestore';
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { db } from '@/lib/firebase-admin';
 import { format } from 'date-fns';
-
-// Initialize Firebase Admin SDK
-if (!getApps().length) {
-  if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
-    initializeApp({
-      credential: cert(JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY))
-    });
-  } else {
-    // For local development, it will use application default credentials.
-    initializeApp();
-  }
-}
-
-const db = getFirestore();
 
 interface Link {
     id: string;
@@ -38,11 +23,11 @@ interface Link {
 
 async function getLinks(): Promise<Link[]> {
   try {
+    // In the future, we'll filter this by user ID
     const linksCollection = db.collection('links');
     const snapshot = await linksCollection.orderBy('createdAt', 'desc').get();
     
     if (snapshot.empty) {
-      console.log('No matching documents.');
       return [];
     }
     
@@ -50,18 +35,23 @@ async function getLinks(): Promise<Link[]> {
         const data = doc.data();
         const createdAt = data.createdAt;
         let formattedDate = 'N/A';
+
         // Firestore timestamp can be null or a Timestamp object
         if (createdAt && typeof createdAt.toDate === 'function') {
            formattedDate = format(createdAt.toDate(), 'yyyy-MM-dd');
         } else if (createdAt) {
-          // Fallback for string or number dates if any
-           formattedDate = format(new Date(createdAt), 'yyyy-MM-dd');
+          // Fallback for string or number dates if any, though less likely with serverTimestamp
+           try {
+             formattedDate = format(new Date(createdAt), 'yyyy-MM-dd');
+           } catch (e) {
+             // Ignore if date is not valid
+           }
         }
 
         return {
             id: doc.id,
-            originalUrl: data.originalUrl,
-            shortCode: data.shortCode,
+            originalUrl: data.originalUrl || '',
+            shortCode: data.shortCode || '',
             clicks: data.clicks || 0,
             createdAt: formattedDate,
         };
@@ -69,7 +59,8 @@ async function getLinks(): Promise<Link[]> {
 
     return links;
   } catch (error) {
-    console.error("Error getting documents:", error);
+    console.error("Error getting documents from Firestore:", error);
+    // Return an empty array or handle the error as appropriate
     return [];
   }
 }
@@ -77,7 +68,8 @@ async function getLinks(): Promise<Link[]> {
 
 export default async function DashboardPage() {
   const links = await getLinks();
-  // Ensure NEXT_PUBLIC_BASE_URL is set in your environment variables
+  // Ensure NEXT_PUBLIC_BASE_URL is set in your environment variables for production
+  // For local dev, we can construct it.
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'localhost:9002';
 
   return (
@@ -99,43 +91,52 @@ export default async function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {links.map((link) => {
-                const shortUrl = `${baseUrl}/l/${link.shortCode}`;
-                return (
-                  <TableRow key={link.id}>
-                    <TableCell className="font-medium truncate max-w-xs hidden md:table-cell">
-                      <a href={link.originalUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                        {link.originalUrl}
-                      </a>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <a href={`//${shortUrl}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                          {shortUrl}
+              {links.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center h-24">
+                    No links created yet.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                links.map((link) => {
+                  const shortUrl = `${baseUrl}/l/${link.shortCode}`;
+                  return (
+                    <TableRow key={link.id}>
+                      <TableCell className="font-medium truncate max-w-xs hidden md:table-cell">
+                        <a href={link.originalUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                          {link.originalUrl}
                         </a>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="flex items-center gap-1 w-fit">
-                          <BarChart2 className="h-3 w-3" />
-                          {link.clicks.toLocaleString()}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">{link.createdAt}</TableCell>
-                    <TableCell className="text-right space-x-0">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Copy Link">
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit Link">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive h-8 w-8" aria-label="Delete Link">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <a href={`//${shortUrl}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {shortUrl}
+                          </a>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="flex items-center gap-1 w-fit">
+                            <BarChart2 className="h-3 w-3" />
+                            {link.clicks.toLocaleString()}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">{link.createdAt}</TableCell>
+                      <TableCell className="text-right space-x-0">
+                        {/* Functionality for these buttons can be added later */}
+                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Copy Link" onClick={() => navigator.clipboard.writeText(`https://${shortUrl}`)}>
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit Link">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive h-8 w-8" aria-label="Delete Link">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
+              )}
             </TableBody>
           </Table>
         </CardContent>
