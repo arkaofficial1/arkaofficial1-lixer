@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Copy, Loader2, WandSparkles } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { shortenUrl } from '@/ai/flows/shorten-url-flow';
+import { z } from 'zod';
 
 interface HomeClientProps {
   translations: {
@@ -28,6 +30,8 @@ export function HomeClient({ translations }: HomeClientProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { toast } = useToast();
+  
+  const UrlSchema = z.string().url({ message: translations.errorInvalid });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,24 +44,28 @@ export function HomeClient({ translations }: HomeClientProps) {
       setIsLoading(false);
       return;
     }
+    
+    const validation = UrlSchema.safeParse(longUrl);
+    if (!validation.success) {
+      setError(validation.error.errors[0].message);
+      setIsLoading(false);
+      return;
+    }
 
-    // Mock API call
-    setTimeout(() => {
-      try {
-        new URL(longUrl);
-        const mockShort = `https://shrnk.ry/${Math.random().toString(36).substring(2, 8)}`;
-        setShortUrl(mockShort);
-      } catch (_) {
-        setError(translations.errorInvalid);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 1000);
+    try {
+      const result = await shortenUrl({ url: longUrl });
+      const fullShortUrl = `${window.location.host}/${result.shortCode}`;
+      setShortUrl(fullShortUrl);
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleCopy = () => {
     if (!shortUrl) return;
-    navigator.clipboard.writeText(shortUrl);
+    navigator.clipboard.writeText(`https://${shortUrl}`);
     toast({
       title: translations.copySuccessTitle,
       description: translations.copySuccessDescription,
