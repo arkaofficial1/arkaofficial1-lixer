@@ -7,8 +7,28 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
-import { db } from '@/lib/firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+
+// Initialize Firebase Admin SDK only if it hasn't been initialized yet.
+// This is necessary because Genkit flows run in a separate context.
+if (!getApps().length) {
+  try {
+    // This environment variable is set in Firebase Studio.
+    if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+      initializeApp({
+        credential: cert(JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY))
+      });
+    } else {
+      // Fallback for local development if GOOGLE_APPLICATION_CREDENTIALS is set.
+      initializeApp();
+    }
+  } catch (error) {
+    console.error("Firebase Admin Initialization Error in Flow:", error);
+  }
+}
+
+const db = getFirestore();
 
 const ShortenUrlInputSchema = z.object({
   url: z.string().url().describe('The long URL to shorten.'),
