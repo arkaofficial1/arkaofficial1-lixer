@@ -10,39 +10,66 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Copy, Edit, Trash2, BarChart2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { getFirestore } from 'firebase-admin/firestore';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { format } from 'date-fns';
 
-const mockLinks = [
-  {
-    id: '1',
-    originalUrl: 'https://www.verylongurl-example.com/some/path/to/a/resource',
-    shortUrl: 'https://shrnk.ry/abc123',
-    clicks: 1254,
-    createdAt: '2023-10-26',
-  },
-  {
-    id: '2',
-    originalUrl: 'https://another-example-of-a-long-url.com/products/item-456',
-    shortUrl: 'https://shrnk.ry/def456',
-    clicks: 832,
-    createdAt: '2023-10-25',
-  },
-  {
-    id: '3',
-    originalUrl: 'https://github.com/facebook/react/issues/new',
-    shortUrl: 'https://shrnk.ry/ghi789',
-    clicks: 234,
-    createdAt: '2023-10-24',
-  },
-  {
-    id: '4',
-    originalUrl: 'https://medium.com/a-very-long-article-title-that-needs-shortening',
-    shortUrl: 'https://shrnk.ry/jkl012',
-    clicks: 56,
-    createdAt: '2023-10-23',
-  },
-];
+// Initialize Firebase Admin SDK
+if (!getApps().length) {
+  if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+    initializeApp({
+      credential: cert(JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY))
+    });
+  } else {
+    // For local development, it will use application default credentials.
+    initializeApp();
+  }
+}
 
-export default function DashboardPage() {
+const db = getFirestore();
+
+interface Link {
+    id: string;
+    originalUrl: string;
+    shortCode: string;
+    clicks: number;
+    createdAt: string; // We'll format the timestamp to a string
+}
+
+async function getLinks(): Promise<Link[]> {
+  try {
+    const linksCollection = db.collection('links');
+    const snapshot = await linksCollection.orderBy('createdAt', 'desc').get();
+    
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return [];
+    }
+    
+    const links: Link[] = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            originalUrl: data.originalUrl,
+            shortCode: data.shortCode,
+            clicks: data.clicks,
+            // Convert Firestore Timestamp to a readable date string
+            createdAt: data.createdAt ? format(data.createdAt.toDate(), 'yyyy-MM-dd') : 'N/A',
+        };
+    });
+
+    return links;
+  } catch (error) {
+    console.error("Error getting documents:", error);
+    return [];
+  }
+}
+
+
+export default async function DashboardPage() {
+  const links = await getLinks();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'localhost:9002';
+
   return (
     <div className="container mx-auto py-10 w-full">
       <Card>
@@ -62,40 +89,43 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockLinks.map((link) => (
-                <TableRow key={link.id}>
-                  <TableCell className="font-medium truncate max-w-xs hidden md:table-cell">
-                    <a href={link.originalUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                      {link.originalUrl}
-                    </a>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <a href={`//${link.shortUrl.split('//')[1]}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                        {link.shortUrl}
+              {links.map((link) => {
+                const shortUrl = `${baseUrl}/${link.shortCode}`;
+                return (
+                  <TableRow key={link.id}>
+                    <TableCell className="font-medium truncate max-w-xs hidden md:table-cell">
+                      <a href={link.originalUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                        {link.originalUrl}
                       </a>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="flex items-center gap-1 w-fit">
-                        <BarChart2 className="h-3 w-3" />
-                        {link.clicks.toLocaleString()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden sm:table-cell">{link.createdAt}</TableCell>
-                  <TableCell className="text-right space-x-0">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Copy Link">
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit Link">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive h-8 w-8" aria-label="Delete Link">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <a href={`//${shortUrl}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                          {shortUrl}
+                        </a>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary" className="flex items-center gap-1 w-fit">
+                          <BarChart2 className="h-3 w-3" />
+                          {link.clicks.toLocaleString()}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">{link.createdAt}</TableCell>
+                    <TableCell className="text-right space-x-0">
+                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Copy Link">
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit Link">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive h-8 w-8" aria-label="Delete Link">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </CardContent>
