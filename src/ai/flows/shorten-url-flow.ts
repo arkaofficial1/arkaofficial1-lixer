@@ -7,6 +7,23 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
+import { getFirestore } from 'firebase-admin/firestore';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+
+// Initialize Firebase Admin SDK
+if (!getApps().length) {
+  if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+    initializeApp({
+      credential: cert(JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY))
+    });
+  } else {
+    // For local development, it will use application default credentials.
+    // Ensure you've run `gcloud auth application-default login`.
+    initializeApp();
+  }
+}
+
+const db = getFirestore();
 
 const ShortenUrlInputSchema = z.object({
   url: z.string().url().describe('The long URL to shorten.'),
@@ -29,10 +46,17 @@ const shortenUrlFlow = ai.defineFlow(
     outputSchema: ShortenUrlOutputSchema,
   },
   async (input) => {
-    // For now, we just generate a random string.
-    // In the future, we would store the long URL and the short code in a database.
     const shortCode = Math.random().toString(36).substring(2, 8);
     
+    const linkDocRef = db.collection('links').doc(shortCode);
+    
+    await linkDocRef.set({
+      originalUrl: input.url,
+      shortCode: shortCode,
+      createdAt: new Date(),
+      clicks: 0
+    });
+
     return {
       shortCode,
     };
