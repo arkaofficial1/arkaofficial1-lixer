@@ -1,0 +1,28 @@
+{
+  "Header": {
+    "dashboard": "Dashboard",
+    "help": "Help",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "openMenu": "Open menu"
+  },
+  "Footer": {
+    "faq": "FAQ",
+    "contact": "Contact",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "copyright": "ShrinkRay. All rights reserved."
+  },
+  "HomePage": {
+    "title": "Shrink Your Links",
+    "description": "A simple, modern, and fast URL shortener.",
+    "placeholder": "https://example.com/very/long/url/to/shorten",
+    "button": "Shorten",
+    "buttonLoading": "Shortening...",
+    "error": "Please enter a URL to shorten.",
+    "errorInvalid": "Please enter a valid URL.",
+    "copySuccessTitle": "Copied to clipboard!",
+    "copySuccessDescription": "The shortened link is now in your clipboard.",
+    "copyButton": "Copy shortened link"
+  }
+}

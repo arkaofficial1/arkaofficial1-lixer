@@ -1,0 +1,28 @@
+{
+  "Header": {
+    "dashboard": "داشبورد",
+    "help": "راهنما",
+    "login": "ورود",
+    "signup": "ثبت نام",
+    "openMenu": "باز کردن منو"
+  },
+  "Footer": {
+    "faq": "سوالات متداول",
+    "contact": "تماس با ما",
+    "terms": "شرایط خدمات",
+    "privacy": "سیاست حفظ حریم خصوصی",
+    "copyright": "ShrinkRay. تمام حقوق محفوظ است."
+  },
+  "HomePage": {
+    "title": "لینک‌های خود را کوتاه کنید",
+    "description": "یک کوتاه کننده لینک ساده، مدرن و سریع.",
+    "placeholder": "https://example.com/url/خیلی/طولانی/برای/کوتاه-کردن",
+    "button": "کوتاه کن",
+    "buttonLoading": "در حال کوتاه کردن...",
+    "error": "لطفا یک آدرس برای کوتاه کردن وارد کنید.",
+    "errorInvalid": "لطفا یک آدرس معتبر وارد کنید.",
+    "copySuccessTitle": "در کلیپ‌بورد کپی شد!",
+    "copySuccessDescription": "لینک کوتاه شده اکنون در کلیپ‌بورد شماست.",
+    "copyButton": "کپی کردن لینک کوتاه شده"
+  }
+}
