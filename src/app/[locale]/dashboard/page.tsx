@@ -62,7 +62,7 @@ async function getLinks(): Promise<Link[]> {
             id: doc.id,
             originalUrl: data.originalUrl,
             shortCode: data.shortCode,
-            clicks: data.clicks,
+            clicks: data.clicks || 0,
             createdAt: formattedDate,
         };
     });
@@ -78,7 +78,7 @@ async function getLinks(): Promise<Link[]> {
 export default async function DashboardPage() {
   const links = await getLinks();
   // Ensure NEXT_PUBLIC_BASE_URL is set in your environment variables
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || (process.env.NODE_ENV === 'development' ? 'localhost:9002' : 'your-production-domain.com');
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'localhost:9002';
 
   return (
     <div className="container mx-auto py-10 w-full">

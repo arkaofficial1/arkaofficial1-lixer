@@ -7,6 +7,23 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
+import { getFirestore } from 'firebase-admin/firestore';
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
+import { FieldValue } from 'firebase-admin/firestore';
+
+// Initialize Firebase Admin SDK
+if (!getApps().length) {
+  if (process.env.GCP_SERVICE_ACCOUNT_KEY) {
+    initializeApp({
+      credential: cert(JSON.parse(process.env.GCP_SERVICE_ACCOUNT_KEY))
+    });
+  } else {
+    // For local development, it will use application default credentials.
+    initializeApp();
+  }
+}
+
+const db = getFirestore();
 
 const ShortenUrlInputSchema = z.object({
   url: z.string().url().describe('The long URL to shorten.'),
@@ -29,8 +46,23 @@ const shortenUrlFlow = ai.defineFlow(
     outputSchema: ShortenUrlOutputSchema,
   },
   async (input) => {
-    // For now, we are not saving to the database. We will re-add this later.
     const shortCode = Math.random().toString(36).substring(2, 8);
+    
+    // Save to Firestore
+    try {
+      const linkDocRef = db.collection('links').doc(shortCode);
+      await linkDocRef.set({
+        originalUrl: input.url,
+        shortCode: shortCode,
+        clicks: 0,
+        createdAt: FieldValue.serverTimestamp(),
+        // In the future, we can add a userId here
+      });
+    } catch (error) {
+      console.error("Error saving link to Firestore:", error);
+      // Decide how to handle the error, maybe throw an exception
+      throw new Error("Could not save the link to the database.");
+    }
     
     return {
       shortCode,

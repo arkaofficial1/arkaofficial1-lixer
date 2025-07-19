@@ -2,6 +2,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { initializeApp, getApps, cert } from 'firebase-admin/app';
 import { redirect } from 'next/navigation';
 import { FieldValue } from 'firebase-admin/firestore';
+import { notFound } from 'next/navigation';
 
 // Initialize Firebase Admin SDK
 if (!getApps().length) {
@@ -45,7 +46,7 @@ export default async function ShortCodeRedirectPage({ params }: { params: { shor
   const { shortCode } = params;
 
   if (!shortCode) {
-    return redirect('/not-found');
+    notFound();
   }
 
   const originalUrl = await getLink(shortCode);
@@ -55,7 +56,7 @@ export default async function ShortCodeRedirectPage({ params }: { params: { shor
   } else {
     // In a real app, you might want a specific "link not found" page.
     // For now, we redirect to the main not-found page.
-    return redirect('/not-found');
+    notFound();
   }
 
   // This part is never reached due to the redirects, but it's good practice
