@@ -1,16 +1,35 @@
 {
+  "Metadata": {
+    "title": "Linxer - The Modern Link Shortener",
+    "description": "A modern, stylish, and minimal link shortening service."
+  },
+  "Logo": {
+    "brand": "Linxer"
+  },
   "Header": {
-    "dashboard": "Dashboard",
-    "help": "Help",
-    "login": "Log In",
-    "signup": "Sign Up",
+    "nav": {
+      "dashboard": "Dashboard",
+      "admin": "Admin",
+      "help": "Help"
+    },
+    "auth": {
+      "login": "Log In",
+      "signup": "Sign Up"
+    },
+    "language": {
+      "change": "Change language",
+      "en": "English",
+      "fa": "فارسی"
+    },
     "openMenu": "Open menu"
   },
   "Footer": {
-    "faq": "FAQ",
-    "contact": "Contact",
-    "terms": "Terms of Service",
-    "privacy": "Privacy Policy",
+    "links": {
+      "faq": "FAQ",
+      "contact": "Contact",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
+    },
     "copyright": "Linxer. All rights reserved."
   },
   "HomePage": {

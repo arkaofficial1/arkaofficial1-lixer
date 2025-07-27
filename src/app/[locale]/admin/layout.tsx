@@ -8,6 +8,7 @@ import {
   Menu,
   Users,
   Settings,
+  Search,
 } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -32,12 +33,18 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Link } from "@/navigation"
 import { Logo } from "@/components/logo"
 import { Nav } from "./components/nav"
+import { getTranslations } from 'next-intl/server';
 
-export default function AdminLayout({
+
+export default async function AdminLayout({
   children,
+  params: { locale }
 }: {
   children: React.ReactNode
+  params: { locale: string }
 }) {
+  const t = await getTranslations('AdminLayout');
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -53,15 +60,14 @@ export default function AdminLayout({
           <div className="mt-auto p-4">
             <Card>
               <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>Upgrade to Pro</CardTitle>
+                <CardTitle>{t('upgradeCard.title')}</CardTitle>
                 <CardDescription>
-                  Unlock all features and get unlimited access to our
-                  support team.
+                  {t('upgradeCard.description')}
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
                 <Button size="sm" className="w-full">
-                  Upgrade
+                  {t('upgradeCard.button')}
                 </Button>
               </CardContent>
             </Card>
@@ -78,7 +84,7 @@ export default function AdminLayout({
                 className="shrink-0 md:hidden"
               >
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
+                <span className="sr-only">{t('toggleNav')}</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
@@ -94,15 +100,14 @@ export default function AdminLayout({
               <div className="mt-auto">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Upgrade to Pro</CardTitle>
+                    <CardTitle>{t('upgradeCard.title')}</CardTitle>
                     <CardDescription>
-                      Unlock all features and get unlimited access to our
-                      support team.
+                      {t('upgradeCard.description')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <Button size="sm" className="w-full">
-                      Upgrade
+                       {t('upgradeCard.button')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -112,9 +117,10 @@ export default function AdminLayout({
           <div className="w-full flex-1">
             <form>
               <div className="relative">
+                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search..."
+                  placeholder={t('searchPlaceholder')}
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>
@@ -124,16 +130,16 @@ export default function AdminLayout({
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
                 <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
+                <span className="sr-only">{t('toggleUserMenu')}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('userMenu.myAccount')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem>{t('userMenu.settings')}</DropdownMenuItem>
+              <DropdownMenuItem>{t('userMenu.support')}</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>{t('userMenu.logout')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>

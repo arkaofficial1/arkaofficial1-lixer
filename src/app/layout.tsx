@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
 import { Toaster } from "@/components/ui/toaster"
@@ -7,11 +7,18 @@ import { Footer } from '@/components/footer';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import './globals.css';
+import { getTranslations } from 'next-intl/server';
 
-export const metadata: Metadata = {
-  title: 'Linxer - The Modern Link Shortener',
-  description: 'A modern, stylish, and minimal link shortening service.',
-};
+
+export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
+  const t = await getTranslations('Metadata');
+ 
+  return {
+    title: t('title'),
+    description: t('description'),
+  };
+}
+
 
 export default async function RootLayout({
   children,

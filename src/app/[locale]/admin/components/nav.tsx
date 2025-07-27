@@ -10,16 +10,18 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Link, usePathname } from "@/navigation"
 import { cn } from "@/lib/utils"
+import { useTranslations } from "next-intl"
 
 export function Nav({ isMobile = false }: { isMobile?: boolean }) {
   const pathname = usePathname()
+  const t = useTranslations('AdminNav');
   
   const navItems = [
-    { href: "/admin/dashboard", label: "Dashboard", icon: Home },
-    { href: "/admin/links", label: "Links", icon: LinkIcon, badge: "1k" },
-    { href: "/admin/users", label: "Users", icon: Users, badge: "23" },
-    { href: "/admin/analytics", label: "Analytics", icon: LineChart },
-    { href: "/admin/settings", label: "Settings", icon: Settings },
+    { href: "/admin/dashboard", label: t('dashboard'), icon: Home },
+    { href: "/admin/links", label: t('links'), icon: LinkIcon },
+    { href: "/admin/users", label: t('users'), icon: Users },
+    { href: "/admin/analytics", label: t('analytics'), icon: LineChart },
+    { href: "/admin/settings", label: t('settings'), icon: Settings },
   ]
   
   const linkClass = isMobile 
@@ -30,8 +32,8 @@ export function Nav({ isMobile = false }: { isMobile?: boolean }) {
 
   return (
     <nav className={cn("grid items-start gap-1 text-sm font-medium", isMobile && "text-lg")}>
-      {navItems.map(({ href, label, icon: Icon, badge }) => {
-        const isActive = pathname === href;
+      {navItems.map(({ href, label, icon: Icon }) => {
+        const isActive = pathname.startsWith(href);
         return (
           <Link
             key={href}
@@ -40,11 +42,6 @@ export function Nav({ isMobile = false }: { isMobile?: boolean }) {
           >
             <Icon className={isMobile ? "h-5 w-5" : "h-4 w-4"} />
             {label}
-            {badge && (
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                {badge}
-              </Badge>
-            )}
           </Link>
         )
       })}

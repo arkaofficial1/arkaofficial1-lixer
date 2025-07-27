@@ -1,0 +1,54 @@
+{
+    "AdminLayout": {
+        "toggleNav": "Toggle navigation menu",
+        "searchPlaceholder": "Search...",
+        "toggleUserMenu": "Toggle user menu",
+        "upgradeCard": {
+            "title": "Upgrade to Pro",
+            "description": "Unlock all features and get unlimited access to our support team.",
+            "button": "Upgrade"
+        },
+        "userMenu": {
+            "myAccount": "My Account",
+            "settings": "Settings",
+            "support": "Support",
+            "logout": "Logout"
+        }
+    },
+    "AdminNav": {
+        "dashboard": "Dashboard",
+        "links": "Links",
+        "users": "Users",
+        "analytics": "Analytics",
+        "settings": "Settings"
+    },
+    "AdminLinksPage": {
+        "title": "All Links",
+        "description": "Manage all links created on the platform.",
+        "colOriginalUrl": "Original URL",
+        "colShortLink": "Short Link",
+        "colCreated": "Created",
+        "colClicks": "Clicks",
+        "colStatus": "Status",
+        "statusActive": "Active"
+    },
+    "AdminUsersPage": {
+        "title": "All Users",
+        "description": "Manage all registered users on the platform.",
+        "colAvatar": "Avatar",
+        "colName": "Name",
+        "colEmail": "Email",
+        "colRole": "Role",
+        "colStatus": "Status",
+        "colCreatedAt": "Created at"
+    },
+    "AdminTableActions": {
+        "toggleMenu": "Toggle menu",
+        "actions": "Actions",
+        "edit": "Edit",
+        "viewDetails": "View Details",
+        "disable": "Disable",
+        "suspend": "Suspend",
+        "delete": "Delete"
+    }
+}

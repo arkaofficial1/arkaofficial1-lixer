@@ -20,18 +20,18 @@ export function Header() {
   const pathname = usePathname();
 
   const navLinks = [
-      { href: "/dashboard", label: t('dashboard') },
-      { href: "/admin/dashboard", label: "Admin" },
-      { href: "/help", label: t('help') },
+      { href: "/dashboard", label: t('nav.dashboard') },
+      { href: "/admin/dashboard", label: t('nav.admin') },
+      { href: "/help", label: t('nav.help') },
   ];
 
   const authLinks = (
     <>
         <Button variant="ghost" asChild>
-            <Link href="/login">{t('login')}</Link>
+            <Link href="/login">{t('auth.login')}</Link>
         </Button>
         <Button variant="default" asChild className="font-semibold bg-primary/90 hover:bg-primary text-primary-foreground">
-            <Link href="/signup">{t('signup')}</Link>
+            <Link href="/signup">{t('auth.signup')}</Link>
         </Button>
     </>
   );
@@ -41,15 +41,15 @@ export function Header() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
           <Globe className="h-5 w-5" />
-          <span className="sr-only">Change language</span>
+          <span className="sr-only">{t('language.change')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-           <Link href={pathname} locale="en">English</Link>
+           <Link href={pathname} locale="en">{t('language.en')}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href={pathname} locale="fa">فارسی</Link>
+          <Link href={pathname} locale="fa">{t('language.fa')}</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -90,10 +90,10 @@ export function Header() {
                   ))}
                   <div className="border-t pt-4 mt-2 flex flex-col gap-2">
                      <Button variant="ghost" className="justify-start text-base" asChild>
-                        <Link href="/login">{t('login')}</Link>
+                        <Link href="/login">{t('auth.login')}</Link>
                      </Button>
                      <Button variant="default" className="text-base" asChild>
-                        <Link href="/signup">{t('signup')}</Link>
+                        <Link href="/signup">{t('auth.signup')}</Link>
                      </Button>
                   </div>
                 </div>

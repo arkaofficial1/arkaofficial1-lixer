@@ -24,27 +24,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { getAllLinks, type LinkWithId } from "./actions"
+import { getTranslations } from 'next-intl/server';
 
-function LinkActions() {
+async function LinkActions({ t }: { t: any }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button aria-haspopup="true" size="icon" variant="ghost">
           <MoreHorizontal className="h-4 w-4" />
-          <span className="sr-only">Toggle menu</span>
+          <span className="sr-only">{t('toggleMenu')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Disable</DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+        <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
+        <DropdownMenuItem>{t('edit')}</DropdownMenuItem>
+        <DropdownMenuItem>{t('disable')}</DropdownMenuItem>
+        <DropdownMenuItem className="text-destructive">{t('delete')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-function LinkRow({ link }: { link: LinkWithId }) {
+function LinkRow({ link, t }: { link: LinkWithId, t: any }) {
   const shortUrl = `linxer.com/l/${link.shortCode}`; // In a real app, this domain should be dynamic
   return (
     <TableRow>
@@ -65,44 +66,47 @@ function LinkRow({ link }: { link: LinkWithId }) {
         {link.clicks}
       </TableCell>
       <TableCell>
-        <Badge variant="outline">Active</Badge>
+        <Badge variant="outline">{t('statusActive')}</Badge>
       </TableCell>
       <TableCell>
-        <LinkActions />
+        <LinkActions t={t} />
       </TableCell>
     </TableRow>
   )
 }
 
 
-export default async function AdminLinksPage() {
+export default async function AdminLinksPage({ params: { locale } }: { params: { locale: string } }) {
   const links = await getAllLinks();
+  const t = await getTranslations('AdminLinksPage');
+  const tActions = await getTranslations('AdminTableActions');
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <Card>
         <CardHeader>
-          <CardTitle>All Links</CardTitle>
+          <CardTitle>{t('title')}</CardTitle>
           <CardDescription>
-            Manage all links created on the platform.
+            {t('description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Original URL</TableHead>
-                <TableHead>Short Link</TableHead>
-                <TableHead className="hidden md:table-cell">Created</TableHead>
-                <TableHead className="hidden md:table-cell text-center">Clicks</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t('colOriginalUrl')}</TableHead>
+                <TableHead>{t('colShortLink')}</TableHead>
+                <TableHead className="hidden md:table-cell">{t('colCreated')}</TableHead>
+                <TableHead className="hidden md:table-cell text-center">{t('colClicks')}</TableHead>
+                <TableHead>{t('colStatus')}</TableHead>
                 <TableHead>
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{tActions('actions')}</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {links.map((link) => (
-                <LinkRow key={link.id} link={link} />
+                <LinkRow key={link.id} link={link} t={tActions} />
               ))}
             </TableBody>
           </Table>

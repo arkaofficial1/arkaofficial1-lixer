@@ -1,0 +1,54 @@
+{
+    "AdminLayout": {
+        "toggleNav": "باز و بسته کردن منوی ناوبری",
+        "searchPlaceholder": "جستجو...",
+        "toggleUserMenu": "باز و بسته کردن منوی کاربر",
+        "upgradeCard": {
+            "title": "ارتقا به نسخه پرو",
+            "description": "تمام ویژگی‌ها را باز کنید و به تیم پشتیبانی ما دسترسی نامحدود داشته باشید.",
+            "button": "ارتقا"
+        },
+        "userMenu": {
+            "myAccount": "حساب من",
+            "settings": "تنظیمات",
+            "support": "پشتیبانی",
+            "logout": "خروج"
+        }
+    },
+    "AdminNav": {
+        "dashboard": "داشبورد",
+        "links": "لینک‌ها",
+        "users": "کاربران",
+        "analytics": "آمار",
+        "settings": "تنظیمات"
+    },
+    "AdminLinksPage": {
+        "title": "همه لینک‌ها",
+        "description": "تمام لینک‌های ایجاد شده در پلتفرم را مدیریت کنید.",
+        "colOriginalUrl": "URL اصلی",
+        "colShortLink": "لینک کوتاه",
+        "colCreated": "ایجاد شده",
+        "colClicks": "کلیک‌ها",
+        "colStatus": "وضعیت",
+        "statusActive": "فعال"
+    },
+    "AdminUsersPage": {
+        "title": "همه کاربران",
+        "description": "تمام کاربران ثبت‌نام شده در پلتفرم را مدیریت کنید.",
+        "colAvatar": "آواتار",
+        "colName": "نام",
+        "colEmail": "ایمیل",
+        "colRole": "نقش",
+        "colStatus": "وضعیت",
+        "colCreatedAt": "تاریخ عضویت"
+    },
+    "AdminTableActions": {
+        "toggleMenu": "باز کردن منو",
+        "actions": "عملیات",
+        "edit": "ویرایش",
+        "viewDetails": "مشاهده جزئیات",
+        "disable": "غیرفعال کردن",
+        "suspend": "تعلیق کردن",
+        "delete": "حذف"
+    }
+}

@@ -4,14 +4,20 @@ import { Link } from '@/navigation';
 export function Footer() {
   const t = useTranslations('Footer');
   
+  const links = [
+    { href: "/help", label: t('links.faq')},
+    { href: "/help#contact", label: t('links.contact')},
+    { href: "#", label: t('links.terms')},
+    { href: "#", label: t('links.privacy')},
+  ]
+
   return (
     <footer className="py-6 px-6 md:px-10 bg-transparent w-full">
       <div className="container mx-auto text-center text-sm text-muted-foreground">
         <div className="flex justify-center gap-4 mb-2">
-          <Link href="/help" className="hover:text-primary transition-colors">{t('faq')}</Link>
-          <Link href="/help#contact" className="hover:text-primary transition-colors">{t('contact')}</Link>
-          <Link href="#" className="hover:text-primary transition-colors">{t('terms')}</Link>
-          <Link href="#" className="hover:text-primary transition-colors">{t('privacy')}</Link>
+          {links.map((link) => (
+            <Link key={link.href} href={link.href} className="hover:text-primary transition-colors">{link.label}</Link>
+          ))}
         </div>
         <p>&copy; {new Date().getFullYear()} {t('copyright')}</p>
       </div>

@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getTranslations } from 'next-intl/server';
 
 // Mock data, to be replaced with real data from Firestore later
 const users = [
@@ -79,33 +80,36 @@ const users = [
     }
 ]
 
-function UserActions() {
+function UserActions({ t }: { t: any }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button aria-haspopup="true" size="icon" variant="ghost">
           <MoreHorizontal className="h-4 w-4" />
-          <span className="sr-only">Toggle menu</span>
+          <span className="sr-only">{t('toggleMenu')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>View Details</DropdownMenuItem>
-        <DropdownMenuItem>Suspend</DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+        <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
+        <DropdownMenuItem>{t('viewDetails')}</DropdownMenuItem>
+        <DropdownMenuItem>{t('suspend')}</DropdownMenuItem>
+        <DropdownMenuItem className="text-destructive">{t('delete')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-export default function AdminUsersPage() {
+export default async function AdminUsersPage({ params: { locale } }: { params: { locale: string } }) {
+  const t = await getTranslations('AdminUsersPage');
+  const tActions = await getTranslations('AdminTableActions');
+  
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
       <Card>
         <CardHeader>
-          <CardTitle>All Users</CardTitle>
+          <CardTitle>{t('title')}</CardTitle>
           <CardDescription>
-            Manage all registered users on the platform.
+            {t('description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -113,15 +117,15 @@ export default function AdminUsersPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="hidden w-[100px] sm:table-cell">
-                  <span className="sr-only">Avatar</span>
+                  <span className="sr-only">{t('colAvatar')}</span>
                 </TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                 <TableHead>Status</TableHead>
-                <TableHead className="hidden md:table-cell">Created at</TableHead>
+                <TableHead>{t('colName')}</TableHead>
+                <TableHead>{t('colEmail')}</TableHead>
+                <TableHead>{t('colRole')}</TableHead>
+                 <TableHead>{t('colStatus')}</TableHead>
+                <TableHead className="hidden md:table-cell">{t('colCreatedAt')}</TableHead>
                 <TableHead>
-                  <span className="sr-only">Actions</span>
+                  <span className="sr-only">{tActions('actions')}</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -146,7 +150,7 @@ export default function AdminUsersPage() {
                     {user.createdAt}
                   </TableCell>
                   <TableCell>
-                    <UserActions />
+                    <UserActions t={tActions} />
                   </TableCell>
                 </TableRow>
               ))}
