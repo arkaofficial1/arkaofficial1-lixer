@@ -52,13 +52,21 @@ export default function LoginPage() {
         description: t('toast.successDescription'),
       });
       // The redirection is now handled by the AuthProvider
-      // router.push("/dashboard"); 
     } catch (error: any) {
       const errorCode = error.code;
       let errorMessage = t('toast.errorUnknown');
-      if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
-         errorMessage = t('toast.errorInvalidCredentials');
+
+      switch (errorCode) {
+        case 'auth/invalid-credential':
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          errorMessage = t('toast.errorInvalidCredentials');
+          break;
+        default:
+          console.error("Firebase Login Error:", error);
+          errorMessage = t('toast.errorUnknown');
       }
+
       toast({
         variant: "destructive",
         title: t('toast.errorTitle'),
