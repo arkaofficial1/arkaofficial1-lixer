@@ -15,6 +15,9 @@ export default async function Home() {
     copySuccessTitle: t('copySuccessTitle'),
     copySuccessDescription: t('copySuccessDescription'),
     copyButton: t('copyButton'),
+    expiresAt: t('expiresAt'),
+    expiresAtPlaceholder: t('expiresAtPlaceholder'),
+    clear: t('clear'),
   };
 
   return <HomeClient translations={translations} />;

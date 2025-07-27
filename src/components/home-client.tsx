@@ -4,10 +4,15 @@ import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Copy, Loader2, WandSparkles } from 'lucide-react';
+import { Copy, Loader2, WandSparkles, Calendar as CalendarIcon, X } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { shortenUrl } from '@/ai/flows/shorten-url-flow';
 import { z } from 'zod';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
+import { Calendar } from './ui/calendar';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+
 
 interface HomeClientProps {
   translations: {
@@ -21,6 +26,9 @@ interface HomeClientProps {
     copySuccessTitle: string;
     copySuccessDescription: string;
     copyButton: string;
+    expiresAt: string;
+    expiresAtPlaceholder: string;
+    clear: string;
   };
 }
 
@@ -29,6 +37,7 @@ export function HomeClient({ translations }: HomeClientProps) {
   const [shortUrl, setShortUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [expiresAt, setExpiresAt] = useState<Date | undefined>();
   const { toast } = useToast();
   
   const UrlSchema = z.string().url({ message: translations.errorInvalid });
@@ -53,7 +62,10 @@ export function HomeClient({ translations }: HomeClientProps) {
     }
 
     try {
-      const result = await shortenUrl({ url: longUrl });
+      const result = await shortenUrl({ 
+          url: longUrl,
+          expiresAt: expiresAt ? expiresAt.toISOString() : undefined,
+      });
       const fullShortUrl = `${window.location.protocol}//${window.location.host}/l/${result.shortCode}`;
       setShortUrl(fullShortUrl);
     } catch (err: any) {
@@ -107,7 +119,38 @@ export function HomeClient({ translations }: HomeClientProps) {
                 )}
               </Button>
             </div>
-            {error && <p className="text-destructive text-sm text-center pt-2">{error}</p>}
+             {error && <p className="text-destructive text-sm text-center pt-2">{error}</p>}
+            <div className="flex flex-col sm:flex-row gap-3">
+                 <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                        variant={"outline"}
+                        className={cn(
+                            "w-full sm:w-[240px] justify-start text-left font-normal h-12 bg-background/80",
+                            !expiresAt && "text-muted-foreground"
+                        )}
+                        >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {expiresAt ? format(expiresAt, "PPP") : <span>{translations.expiresAtPlaceholder}</span>}
+                        </Button>
+                    </PopoverTrigger>
+                    {expiresAt && (
+                        <Button variant="ghost" size="icon" className="h-12 w-12" onClick={() => setExpiresAt(undefined)}>
+                            <X className="h-4 w-4"/>
+                            <span className="sr-only">{translations.clear}</span>
+                        </Button>
+                    )}
+                    <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                        mode="single"
+                        selected={expiresAt}
+                        onSelect={setExpiresAt}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
           </form>
 
           {shortUrl && (

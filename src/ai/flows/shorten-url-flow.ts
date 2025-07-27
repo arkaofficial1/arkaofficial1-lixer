@@ -8,10 +8,11 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 import { db } from '@/lib/firebase-admin'; // Use the centralized admin instance
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 
 const ShortenUrlInputSchema = z.object({
   url: z.string().url().describe('The long URL to shorten.'),
+  expiresAt: z.string().optional().describe('The expiration date for the link in ISO format.'),
 });
 type ShortenUrlInput = z.infer<typeof ShortenUrlInputSchema>;
 
@@ -61,6 +62,17 @@ const shortenUrlFlow = ai.defineFlow(
         shortCode = `${shortCode}-${Math.random().toString(36).substring(2, 5)}`;
       }
     
+      const linkData: any = {
+        originalUrl: input.url,
+        shortCode: shortCode,
+        clicks: 0,
+        createdAt: FieldValue.serverTimestamp(),
+      };
+
+      if (input.expiresAt) {
+        linkData.expiresAt = Timestamp.fromDate(new Date(input.expiresAt));
+      }
+
       // Save to Firestore
       const linkDocRef = db.collection('links').doc(shortCode);
       const doc = await linkDocRef.get();
@@ -69,22 +81,12 @@ const shortenUrlFlow = ai.defineFlow(
       // A more robust solution would be to retry the AI prompt or have a more complex collision resolution.
       if (doc.exists) {
         const newShortCode = `${shortCode}-${Math.random().toString(36).substring(2, 5)}`;
-         await db.collection('links').doc(newShortCode).set({
-            originalUrl: input.url,
-            shortCode: newShortCode,
-            clicks: 0,
-            createdAt: FieldValue.serverTimestamp(),
-        });
+        const newLinkData = {...linkData, shortCode: newShortCode };
+         await db.collection('links').doc(newShortCode).set(newLinkData);
         return { shortCode: newShortCode };
       }
 
-      await linkDocRef.set({
-        originalUrl: input.url,
-        shortCode: shortCode,
-        clicks: 0,
-        createdAt: FieldValue.serverTimestamp(),
-        // In the future, we can add a userId here
-      });
+      await linkDocRef.set(linkData);
 
        return {
             shortCode,

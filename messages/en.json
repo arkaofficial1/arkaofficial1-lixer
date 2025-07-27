@@ -44,7 +44,10 @@
     "errorInvalid": "Please enter a valid URL.",
     "copySuccessTitle": "Copied to clipboard!",
     "copySuccessDescription": "The shortened link is now in your clipboard.",
-    "copyButton": "Copy shortened link"
+    "copyButton": "Copy shortened link",
+    "expiresAt": "Expires at",
+    "expiresAtPlaceholder": "Set expiration date",
+    "clear": "Clear"
   },
   "LoginPage": {
     "title": "Log In",

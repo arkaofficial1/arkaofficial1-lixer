@@ -44,7 +44,10 @@
     "errorInvalid": "لطفا یک آدرس معتبر وارد کنید.",
     "copySuccessTitle": "در کلیپ‌بورد کپی شد!",
     "copySuccessDescription": "لینک کوتاه شده اکنون در کلیپ‌بورد شماست.",
-    "copyButton": "کپی کردن لینک کوتاه شده"
+    "copyButton": "کپی کردن لینک کوتاه شده",
+    "expiresAt": "تاریخ انقضا",
+    "expiresAtPlaceholder": "تنظیم تاریخ انقضا",
+    "clear": "پاک کردن"
   },
   "LoginPage": {
     "title": "ورود به حساب کاربری",

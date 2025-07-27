@@ -1,6 +1,6 @@
 import { db } from '@/lib/firebase-admin';
 import { redirect } from 'next/navigation';
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { notFound } from 'next/navigation';
 
 async function getLinkAndIncrementClicks(shortCode: string): Promise<string | null> {
@@ -10,6 +10,18 @@ async function getLinkAndIncrementClicks(shortCode: string): Promise<string | nu
 
     if (docSnap.exists) {
       const data = docSnap.data();
+
+      // Check for expiration
+      if (data?.expiresAt && data.expiresAt instanceof Timestamp) {
+        const expirationDate = data.expiresAt.toDate();
+        if (expirationDate < new Date()) {
+          console.log(`Link ${shortCode} has expired.`);
+          // Optionally, you could delete the link here
+          // await linkDocRef.delete();
+          return null; // Treat as not found
+        }
+      }
+
       // Atomically increment the click count in the background.
       // We don't need to wait for this to complete before redirecting.
       linkDocRef.update({
@@ -41,7 +53,7 @@ export default async function ShortCodeRedirectPage({ params }: { params: { shor
     // Perform the redirect
     redirect(originalUrl);
   } else {
-    // If the link is not found, show the standard 404 page.
+    // If the link is not found or expired, show the standard 404 page.
     notFound();
   }
 }
