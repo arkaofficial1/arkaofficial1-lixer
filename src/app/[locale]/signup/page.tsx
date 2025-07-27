@@ -23,20 +23,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
-
-const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters." }),
-  confirmPassword: z.string(),
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords do not match.",
-  path: ["confirmPassword"],
-});
+import { useTranslations } from "next-intl"
 
 export default function SignupPage() {
+  const t = useTranslations('SignupPage');
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const formSchema = z.object({
+    email: z.string().email({ message: t('validation.invalidEmail') }),
+    password: z.string().min(8, { message: t('validation.passwordLength') }),
+    confirmPassword: z.string(),
+  }).refine(data => data.password === data.confirmPassword, {
+    message: t('validation.passwordsNoMatch'),
+    path: ["confirmPassword"],
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,27 +55,26 @@ export default function SignupPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       
-      // Create a user document in Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         email: user.email,
-        role: 'user', // default role
+        role: 'user', 
         createdAt: serverTimestamp(),
       });
       
       toast({
-        title: "Account Created Successfully",
-        description: "You can now log in.",
+        title: t('toast.successTitle'),
+        description: t('toast.successDescription'),
       });
       router.push("/dashboard");
     } catch (error: any) {
-      let errorMessage = "An unknown error occurred.";
+      let errorMessage = t('toast.errorUnknown');
       if (error.code === 'auth/email-already-in-use') {
-        errorMessage = "This email address is already in use.";
+        errorMessage = t('toast.errorEmailInUse');
       }
       toast({
         variant: "destructive",
-        title: "Signup Failed",
+        title: t('toast.errorTitle'),
         description: errorMessage,
       });
     } finally {
@@ -84,8 +85,8 @@ export default function SignupPage() {
   return (
     <Card className="w-full max-w-sm shadow-lg border-none bg-card/80 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Create an Account</CardTitle>
-        <CardDescription>Start shortening links for free.</CardDescription>
+        <CardTitle className="text-2xl">{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -95,7 +96,7 @@ export default function SignupPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('emailLabel')}</FormLabel>
                   <FormControl>
                     <Input placeholder="you@example.com" {...field} disabled={isLoading} />
                   </FormControl>
@@ -108,7 +109,7 @@ export default function SignupPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('passwordLabel')}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
                   </FormControl>
@@ -121,7 +122,7 @@ export default function SignupPage() {
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>{t('confirmPasswordLabel')}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
                   </FormControl>
@@ -131,14 +132,14 @@ export default function SignupPage() {
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Account
+              {t('submitButton')}
             </Button>
           </form>
         </Form>
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
+          {t('loginPrompt.text')}{" "}
           <Link href="/login" className="font-medium text-primary hover:underline">
-            Log in
+            {t('loginPrompt.link')}
           </Link>
         </p>
       </CardContent>

@@ -45,5 +45,116 @@
     "copySuccessTitle": "Copied to clipboard!",
     "copySuccessDescription": "The shortened link is now in your clipboard.",
     "copyButton": "Copy shortened link"
+  },
+  "LoginPage": {
+    "title": "Log In",
+    "description": "Enter your credentials to access your dashboard.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "submitButton": "Log In",
+    "signupPrompt": {
+      "text": "Don't have an account?",
+      "link": "Sign up"
+    },
+    "validation": {
+      "invalidEmail": "Invalid email address.",
+      "passwordRequired": "Password is required."
+    },
+    "toast": {
+      "successTitle": "Logged In Successfully",
+      "successDescription": "Redirecting you to your dashboard.",
+      "errorTitle": "Login Failed",
+      "errorInvalidCredentials": "Invalid email or password. Please try again.",
+      "errorUnknown": "An unknown error occurred."
+    }
+  },
+  "SignupPage": {
+    "title": "Create an Account",
+    "description": "Start shortening links for free.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "submitButton": "Create Account",
+    "loginPrompt": {
+      "text": "Already have an account?",
+      "link": "Log in"
+    },
+    "validation": {
+      "invalidEmail": "Invalid email address.",
+      "passwordLength": "Password must be at least 8 characters.",
+      "passwordsNoMatch": "Passwords do not match."
+    },
+    "toast": {
+      "successTitle": "Account Created Successfully",
+      "successDescription": "You can now log in.",
+      "errorTitle": "Signup Failed",
+      "errorEmailInUse": "This email address is already in use.",
+      "errorUnknown": "An unknown error occurred."
+    }
+  },
+  "DashboardPage": {
+    "title": "My Links Dashboard",
+    "description": "Manage your shortened links and track their performance.",
+    "noLinks": "No links created yet.",
+    "table": {
+      "originalUrl": "Original URL",
+      "shortLink": "Short Link",
+      "clicks": "Clicks",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "actions": {
+      "copy": "Copy Link",
+      "edit": "Edit Link",
+      "delete": "Delete Link"
+    },
+    "toast": {
+      "title": "Copied!",
+      "description": "The shortened link has been copied to your clipboard."
+    }
+  },
+  "HelpPage": {
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "description": "Find answers to common questions about Linxer.",
+      "q1": {
+        "question": "Is Linxer free to use?",
+        "answer": "Yes, Linxer is completely free for shortening links. We offer a dashboard for registered users to manage their links, also for free."
+      },
+      "q2": {
+        "question": "Do I need to create an account to shorten links?",
+        "answer": "No, you can shorten links anonymously without an account. However, creating a free account allows you to manage your links, view analytics, and use custom aliases in the future."
+      },
+      "q3": {
+        "question": "How long do the shortened links last?",
+        "answer": "Shortened links created with Linxer never expire. They will continue to work as long as the service is operational."
+      },
+      "q4": {
+        "question": "Can I see how many times my link has been clicked?",
+        "answer": "Yes, if you are a registered user, your dashboard will show you detailed click analytics for each of your links."
+      }
+    },
+    "contact": {
+      "title": "Contact Us",
+      "description": "Have a different question? Get in touch with our team.",
+      "form": {
+        "title": "Send us a message",
+        "description": "We'll get back to you as soon as possible.",
+        "nameLabel": "Name",
+        "namePlaceholder": "Your Name",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you@example.com",
+        "subjectLabel": "Subject",
+        "subjectPlaceholder": "Question about...",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Your message here...",
+        "submitButton": "Send Message"
+      }
+    }
+  },
+  "NotFoundPage": {
+    "title": "404 - Page Not Found",
+    "description": "Sorry, the page you are looking for does not exist.",
+    "link": "Go back to the homepage"
   }
 }

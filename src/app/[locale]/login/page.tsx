@@ -22,16 +22,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
-
-const formSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
-  password: z.string().min(1, { message: "Password is required." }),
-})
+import { useTranslations } from "next-intl"
 
 export default function LoginPage() {
+  const t = useTranslations('LoginPage');
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const formSchema = z.object({
+    email: z.string().email({ message: t('validation.invalidEmail') }),
+    password: z.string().min(1, { message: t('validation.passwordRequired') }),
+  })
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,21 +48,19 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       toast({
-        title: "Logged In Successfully",
-        description: "Redirecting you to your dashboard.",
+        title: t('toast.successTitle'),
+        description: t('toast.successDescription'),
       });
       router.push("/dashboard");
     } catch (error: any) {
       const errorCode = error.code;
-      let errorMessage = "An unknown error occurred.";
-      if (errorCode === 'auth/invalid-credential') {
-        errorMessage = "Invalid email or password. Please try again.";
-      } else if (errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
-         errorMessage = "Invalid email or password. Please try again.";
+      let errorMessage = t('toast.errorUnknown');
+      if (errorCode === 'auth/invalid-credential' || errorCode === 'auth/user-not-found' || errorCode === 'auth/wrong-password') {
+         errorMessage = t('toast.errorInvalidCredentials');
       }
       toast({
         variant: "destructive",
-        title: "Login Failed",
+        title: t('toast.errorTitle'),
         description: errorMessage,
       });
     } finally {
@@ -71,8 +71,8 @@ export default function LoginPage() {
   return (
     <Card className="w-full max-w-sm shadow-lg border-none bg-card/80 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Log In</CardTitle>
-        <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+        <CardTitle className="text-2xl">{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -82,7 +82,7 @@ export default function LoginPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t('emailLabel')}</FormLabel>
                   <FormControl>
                     <Input placeholder="you@example.com" {...field} disabled={isLoading} />
                   </FormControl>
@@ -95,7 +95,7 @@ export default function LoginPage() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{t('passwordLabel')}</FormLabel>
                   <FormControl>
                     <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
                   </FormControl>
@@ -105,14 +105,14 @@ export default function LoginPage() {
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Log In
+              {t('submitButton')}
             </Button>
           </form>
         </Form>
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
+          {t('signupPrompt.text')}{" "}
           <Link href="/signup" className="font-medium text-primary hover:underline">
-            Sign up
+            {t('signupPrompt.link')}
           </Link>
         </p>
       </CardContent>

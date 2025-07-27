@@ -18,16 +18,16 @@ import { useToast } from "@/hooks/use-toast";
 import type { Link } from "./actions";
 import { getLinks } from "./actions";
 import ProtectedRoute from "@/components/protected-route"
+import { useTranslations } from "next-intl"
 
 function DashboardPageContent() {
+  const t = useTranslations('DashboardPage');
   const [links, setLinks] = useState<Link[]>([]);
   const [baseUrl, setBaseUrl] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
-    // Fetch links on component mount by calling the server action
     getLinks().then(setLinks);
-    // Set base URL on the client side
     if (typeof window !== 'undefined') {
         setBaseUrl(`${window.location.protocol}//${window.location.host}`);
     }
@@ -37,8 +37,8 @@ function DashboardPageContent() {
     const fullUrl = `${baseUrl}/l/${shortCode}`;
     navigator.clipboard.writeText(fullUrl);
     toast({
-        title: "Copied!",
-        description: "The shortened link has been copied to your clipboard.",
+        title: t('toast.title'),
+        description: t('toast.description'),
     });
   }
 
@@ -46,25 +46,25 @@ function DashboardPageContent() {
     <div className="container mx-auto py-10 w-full">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">My Links Dashboard</CardTitle>
-          <CardDescription>Manage your shortened links and track their performance.</CardDescription>
+          <CardTitle className="text-2xl">{t('title')}</CardTitle>
+          <CardDescription>{t('description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[40%] hidden md:table-cell">Original URL</TableHead>
-                <TableHead>Short Link</TableHead>
-                <TableHead>Clicks</TableHead>
-                <TableHead className="hidden sm:table-cell">Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[40%] hidden md:table-cell">{t('table.originalUrl')}</TableHead>
+                <TableHead>{t('table.shortLink')}</TableHead>
+                <TableHead>{t('table.clicks')}</TableHead>
+                <TableHead className="hidden sm:table-cell">{t('table.created')}</TableHead>
+                <TableHead className="text-right">{t('table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {links.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center h-24">
-                    No links created yet.
+                    {t('noLinks')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -92,14 +92,13 @@ function DashboardPageContent() {
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">{link.createdAt}</TableCell>
                       <TableCell className="text-right space-x-0">
-                        {/* Functionality for these buttons can be added later */}
-                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Copy Link" onClick={() => handleCopy(link.shortCode)}>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={t('actions.copy')} onClick={() => handleCopy(link.shortCode)}>
                           <Copy className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Edit Link">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={t('actions.edit')}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive h-8 w-8" aria-label="Delete Link">
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive h-8 w-8" aria-label={t('actions.delete')}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
