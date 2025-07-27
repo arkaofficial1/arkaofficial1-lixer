@@ -1,14 +1,16 @@
+
 'use server';
 
 import { db } from '@/lib/firebase-admin';
 import { format } from 'date-fns';
 
+// Matches the database schema proposal
 export interface Link {
     id: string;
     originalUrl: string;
     shortCode: string;
     clicks: number;
-    createdAt: string; // We'll format the timestamp to a string
+    createdAt: string; // We'll format the timestamp to a string for display
 }
 
 export async function getLinks(): Promise<Link[]> {
@@ -30,7 +32,7 @@ export async function getLinks(): Promise<Link[]> {
         if (createdAt && typeof createdAt.toDate === 'function') {
            formattedDate = format(createdAt.toDate(), 'yyyy-MM-dd');
         } else if (createdAt) {
-          // Fallback for string or number dates if any, though less likely with serverTimestamp
+          // Fallback for string or number dates if any
            try {
              const d = new Date(createdAt);
              if (!isNaN(d.getTime())) {

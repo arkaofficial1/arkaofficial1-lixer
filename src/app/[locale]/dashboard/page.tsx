@@ -19,15 +19,20 @@ import type { Link } from "./actions";
 import { getLinks } from "./actions";
 import ProtectedRoute from "@/components/protected-route"
 import { useTranslations } from "next-intl"
+import { Skeleton } from "@/components/ui/skeleton";
 
 function DashboardPageContent() {
   const t = useTranslations('DashboardPage');
   const [links, setLinks] = useState<Link[]>([]);
+  const [loading, setLoading] = useState(true);
   const [baseUrl, setBaseUrl] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
-    getLinks().then(setLinks);
+    getLinks().then(data => {
+        setLinks(data);
+        setLoading(false);
+    });
     if (typeof window !== 'undefined') {
         setBaseUrl(`${window.location.protocol}//${window.location.host}`);
     }
@@ -61,7 +66,15 @@ function DashboardPageContent() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {links.length === 0 ? (
+              {loading ? (
+                 Array.from({ length: 3 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell colSpan={5}>
+                      <Skeleton className="h-8 w-full" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : links.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center h-24">
                     {t('noLinks')}
@@ -69,7 +82,8 @@ function DashboardPageContent() {
                 </TableRow>
               ) : (
                 links.map((link) => {
-                  const shortUrl = `${baseUrl.replace(/^(https?:\/\/)/, '')}/l/${link.shortCode}`;
+                  const shortUrlDisplay = `${baseUrl.replace(/^(https?:\/\/)/, '')}/l/${link.shortCode}`;
+                  const fullShortUrl = `${baseUrl}/l/${link.shortCode}`;
                   return (
                     <TableRow key={link.id}>
                       <TableCell className="font-medium truncate max-w-xs hidden md:table-cell">
@@ -79,8 +93,8 @@ function DashboardPageContent() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <a href={`${baseUrl}/l/${link.shortCode}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                            {shortUrl}
+                          <a href={fullShortUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                            {shortUrlDisplay}
                           </a>
                         </div>
                       </TableCell>

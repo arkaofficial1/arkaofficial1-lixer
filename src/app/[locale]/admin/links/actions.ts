@@ -5,11 +5,12 @@ import { db } from '@/lib/firebase-admin';
 import { format } from 'date-fns';
 import { revalidatePath } from 'next/cache';
 
+// Matches the database schema proposal
 export interface Link {
     originalUrl: string;
     shortCode: string;
     clicks: number;
-    createdAt: string; 
+    createdAt: string; // Formatted for display
 }
 
 export interface LinkWithId extends Link {
@@ -30,8 +31,19 @@ export async function getAllLinks(): Promise<LinkWithId[]> {
         const createdAt = data.createdAt;
         let formattedDate = 'N/A';
 
+        // Firestore timestamp can be null or a Timestamp object
         if (createdAt && typeof createdAt.toDate === 'function') {
-           formattedDate = format(createdAt.toDate(), 'yyyy-MM-dd');
+           formattedDate = format(createdAt.toDate(), 'yyyy-MM-dd HH:mm');
+        } else if (createdAt) {
+          // Fallback for string or number dates if any
+           try {
+             const d = new Date(createdAt);
+             if (!isNaN(d.getTime())) {
+                formattedDate = format(d, 'yyyy-MM-dd HH:mm');
+             }
+           } catch (e) {
+             // Ignore if date is not valid
+           }
         }
 
         return {

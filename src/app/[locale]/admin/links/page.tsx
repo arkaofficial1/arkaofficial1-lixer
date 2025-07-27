@@ -30,8 +30,9 @@ import { deleteLink, getAllLinks, type LinkWithId } from "./actions"
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, useTransition } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
-function LinkActions({ linkId, t }: { linkId: string, t: any }) {
+function LinkActions({ linkId, t, onDelete }: { linkId: string, t: any, onDelete: (id: string) => void }) {
     const { toast } = useToast();
     const [isPending, startTransition] = useTransition();
 
@@ -43,6 +44,7 @@ function LinkActions({ linkId, t }: { linkId: string, t: any }) {
                     title: "Success",
                     description: "Link has been deleted.",
                 });
+                onDelete(linkId); // Trigger re-render in parent
             } else {
                  toast({
                     variant: "destructive",
@@ -77,7 +79,7 @@ function LinkActions({ linkId, t }: { linkId: string, t: any }) {
   )
 }
 
-function LinkRow({ link, t }: { link: LinkWithId, t: any }) {
+function LinkRow({ link, t }: { link: LinkWithId, t: any, onDelete: (id: string) => void }) {
   const shortUrl = `linxer.com/l/${link.shortCode}`; // In a real app, this domain should be dynamic
   return (
     <TableRow>
@@ -101,7 +103,7 @@ function LinkRow({ link, t }: { link: LinkWithId, t: any }) {
         <Badge variant="outline">{t('statusActive')}</Badge>
       </TableCell>
       <TableCell>
-        <LinkActions linkId={link.id} t={t} />
+        <LinkActions linkId={link.id} t={t} onDelete={() => {}}/>
       </TableCell>
     </TableRow>
   )
@@ -110,12 +112,21 @@ function LinkRow({ link, t }: { link: LinkWithId, t: any }) {
 
 export default function AdminLinksPage() {
   const [links, setLinks] = useState<LinkWithId[]>([]);
+  const [loading, setLoading] = useState(true);
   const t = useTranslations('AdminLinksPage');
   const tActions = useTranslations('AdminTableActions');
 
   useEffect(() => {
-    getAllLinks().then(setLinks);
-  }, [links]); // Re-fetch when links state changes after deletion
+    getAllLinks().then(data => {
+      setLinks(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const handleDelete = (deletedLinkId: string) => {
+    setLinks(prevLinks => prevLinks.filter(link => link.id !== deletedLinkId));
+  };
+
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -141,9 +152,25 @@ export default function AdminLinksPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {links.map((link) => (
-                <LinkRow key={link.id} link={link} t={tActions} />
-              ))}
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell colSpan={6}>
+                      <Skeleton className="h-8 w-full" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : links.length > 0 ? (
+                links.map((link) => (
+                  <LinkRow key={link.id} link={link} t={tActions} onDelete={handleDelete} />
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center h-24">
+                    No links found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
