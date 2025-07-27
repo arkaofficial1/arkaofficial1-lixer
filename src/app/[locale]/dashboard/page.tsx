@@ -29,10 +29,11 @@ function DashboardPageContent() {
   const { toast } = useToast();
 
   useEffect(() => {
-    getLinks().then(data => {
-        setLinks(data);
-        setLoading(false);
-    });
+    // getLinks().then(data => {
+    //     setLinks(data);
+    //     setLoading(false);
+    // });
+    setLoading(false); // Temporarily disable data fetching
     if (typeof window !== 'undefined') {
         setBaseUrl(`${window.location.protocol}//${window.location.host}`);
     }
