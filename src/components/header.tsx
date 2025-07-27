@@ -23,6 +23,9 @@ export function Header() {
       <Button variant="ghost" asChild>
         <Link href="/dashboard">{t('dashboard')}</Link>
       </Button>
+       <Button variant="ghost" asChild>
+        <Link href="/admin/dashboard">Admin</Link>
+      </Button>
       <Button variant="ghost" asChild>
         <Link href="/help">{t('help')}</Link>
       </Button>
@@ -79,6 +82,9 @@ export function Header() {
                 <div className="flex flex-col gap-2">
                   <Button variant="ghost" className="justify-start text-base" asChild>
                     <Link href="/dashboard">{t('dashboard')}</Link>
+                  </Button>
+                   <Button variant="ghost" className="justify-start text-base" asChild>
+                    <Link href="/admin/dashboard">Admin</Link>
                   </Button>
                   <Button variant="ghost" className="justify-start text-base" asChild>
                     <Link href="/help">{t('help')}</Link>
