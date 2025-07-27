@@ -44,6 +44,7 @@ export default async function AdminLayout({
   params: { locale: string }
 }) {
   const t = await getTranslations('AdminLayout');
+  const tLogo = await getTranslations('Logo');
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -73,15 +74,13 @@ export default async function AdminLayout({
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <nav className="grid gap-2 text-lg font-medium">
-                <Link
-                  href="/"
-                  className="flex items-center gap-2 text-lg font-semibold mb-4"
-                >
-                  <Logo/>
-                </Link>
-                <Nav isMobile={true}/>
-              </nav>
+              <Link
+                href="/"
+                className="flex items-center gap-2 text-lg font-semibold mb-4"
+              >
+                <Logo/>
+              </Link>
+              <Nav isMobile={true}/>
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
