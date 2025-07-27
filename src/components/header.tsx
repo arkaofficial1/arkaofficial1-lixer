@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export function Header() {
   const t = useTranslations('Header');
+  const tLogo = useTranslations('Logo');
   const pathname = usePathname();
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -122,7 +123,7 @@ export function Header() {
               <div className="flex flex-col gap-4 p-4">
                 <div className="pb-4 border-b">
                    <Link href="/">
-                    <span className="text-xl font-bold tracking-tight">{t('Logo.brand')}</span>
+                    <span className="text-xl font-bold tracking-tight">{tLogo('brand')}</span>
                   </Link>
                 </div>
                 <div className="flex flex-col gap-2">
