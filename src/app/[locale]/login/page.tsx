@@ -51,7 +51,8 @@ export default function LoginPage() {
         title: t('toast.successTitle'),
         description: t('toast.successDescription'),
       });
-      router.push("/dashboard");
+      // The redirection is now handled by the AuthProvider
+      // router.push("/dashboard"); 
     } catch (error: any) {
       const errorCode = error.code;
       let errorMessage = t('toast.errorUnknown');

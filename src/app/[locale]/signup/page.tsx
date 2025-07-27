@@ -57,7 +57,8 @@ export default function SignupPage() {
         title: t('toast.successTitle'),
         description: t('toast.successDescription'),
       });
-      router.push("/dashboard");
+      // The redirection is now handled by the AuthProvider
+      // router.push("/dashboard");
     } catch (error: any) {
       let errorMessage = t('toast.errorUnknown');
       if (error.code === 'auth/email-already-in-use') {
