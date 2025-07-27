@@ -42,6 +42,7 @@ const namingPrompt = ai.definePrompt({
     URL: {{{url}}}`,
 });
 
+const reservedShortCodes = ['admin', 'api', 'dashboard', 'login', 'signup', 'help', 'contact', 'privacy', 'terms', 'l'];
 
 const shortenUrlFlow = ai.defineFlow(
   {
@@ -50,12 +51,17 @@ const shortenUrlFlow = ai.defineFlow(
     outputSchema: ShortenUrlOutputSchema,
   },
   async (input) => {
-    // Generate a smart short code using AI
-    const { output } = await namingPrompt({ url: input.url });
-    const shortCode = output!.shortCode;
-    
-    // Save to Firestore
     try {
+      // Generate a smart short code using AI
+      const { output } = await namingPrompt({ url: input.url });
+      let shortCode = output!.shortCode;
+      
+      // Prevent using reserved words
+      if (reservedShortCodes.includes(shortCode)) {
+        shortCode = `${shortCode}-${Math.random().toString(36).substring(2, 5)}`;
+      }
+    
+      // Save to Firestore
       const linkDocRef = db.collection('links').doc(shortCode);
       const doc = await linkDocRef.get();
 
@@ -84,9 +90,9 @@ const shortenUrlFlow = ai.defineFlow(
             shortCode,
        };
     } catch (error) {
-      console.error("Error saving link to Firestore in flow:", error);
-      // In a real app, you'd want more robust error handling.
-      throw new Error("Could not save the link to the database.");
+      console.error("Error in shortenUrlFlow:", error);
+      // Return a generic error to the client instead of throwing a server error
+      throw new Error("Failed to shorten the URL. Please try again later.");
     }
   }
 );

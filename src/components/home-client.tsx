@@ -56,8 +56,8 @@ export function HomeClient({ translations }: HomeClientProps) {
       const result = await shortenUrl({ url: longUrl });
       const fullShortUrl = `${window.location.protocol}//${window.location.host}/l/${result.shortCode}`;
       setShortUrl(fullShortUrl);
-    } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
