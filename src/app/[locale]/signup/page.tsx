@@ -55,10 +55,13 @@ export default function SignupPage() {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       
+      // Assign 'admin' role if the email is admin@example.com, otherwise 'user'
+      const userRole = values.email === 'admin@example.com' ? 'admin' : 'user';
+
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         email: user.email,
-        role: 'user', 
+        role: userRole, 
         createdAt: serverTimestamp(),
       });
       
