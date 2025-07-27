@@ -19,7 +19,7 @@ export function Footer() {
             <Link key={link.href} href={link.href} className="hover:text-primary transition-colors">{link.label}</Link>
           ))}
         </div>
-        <p>&copy; {new Date().getFullYear()} {t('copyright')}</p>
+        <p>{t('copyright', { year: new Date().getFullYear() })}</p>
       </div>
     </footer>
   );

@@ -30,7 +30,7 @@
       "terms": "Terms of Service",
       "privacy": "Privacy Policy"
     },
-    "copyright": "Linxer. All rights reserved."
+    "copyright": "© {year} Linxer. All rights reserved."
   },
   "HomePage": {
     "title": "Link shortener",
