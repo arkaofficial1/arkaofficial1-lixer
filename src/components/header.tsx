@@ -58,7 +58,9 @@ export function Header() {
   return (
     <header className="py-4 px-4 sm:px-6 md:px-10 bg-transparent w-full absolute top-0 left-0 z-10">
       <div className="container mx-auto flex justify-between items-center">
-        <Logo />
+        <Link href="/">
+            <Logo />
+        </Link>
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map(link => (
             <Button variant="ghost" asChild key={link.href}>
@@ -80,7 +82,9 @@ export function Header() {
             <SheetContent side="right">
               <div className="flex flex-col gap-4 p-4">
                 <div className="pb-4 border-b">
-                   <Logo />
+                  <Link href="/">
+                    <Logo />
+                  </Link>
                 </div>
                 <div className="flex flex-col gap-2">
                  {navLinks.map(link => (
