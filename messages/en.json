@@ -14,7 +14,7 @@
     "copyright": "Linxer. All rights reserved."
   },
   "HomePage": {
-    "title": "Shrink Your Links",
+    "title": "Link shortener",
     "description": "A simple, modern, and fast URL shortener.",
     "placeholder": "https://example.com/very/long/url/to/shorten",
     "button": "Shorten",
