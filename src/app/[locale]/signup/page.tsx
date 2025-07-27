@@ -6,8 +6,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Link, useRouter } from "@/navigation"
 import { createUserWithEmailAndPassword } from "firebase/auth"
-import { auth, db } from "@/lib/firebase"
-import { doc, setDoc, serverTimestamp } from "firebase/firestore"
+import { auth } from "@/lib/firebase"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -52,18 +51,7 @@ export default function SignupPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-      const user = userCredential.user;
-      
-      // Assign 'admin' role if the email is admin@example.com, otherwise 'user'
-      const userRole = values.email === 'admin@example.com' ? 'admin' : 'user';
-
-      await setDoc(doc(db, "users", user.uid), {
-        uid: user.uid,
-        email: user.email,
-        role: userRole, 
-        createdAt: serverTimestamp(),
-      });
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
       
       toast({
         title: t('toast.successTitle'),
