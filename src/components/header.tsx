@@ -23,7 +23,7 @@ export function Header() {
       <Button variant="ghost" asChild>
         <Link href="/dashboard">{t('dashboard')}</Link>
       </Button>
-       <Button variant="ghost" asChild>
+      <Button variant="ghost" asChild>
         <Link href="/admin/dashboard">Admin</Link>
       </Button>
       <Button variant="ghost" asChild>
@@ -83,7 +83,7 @@ export function Header() {
                   <Button variant="ghost" className="justify-start text-base" asChild>
                     <Link href="/dashboard">{t('dashboard')}</Link>
                   </Button>
-                   <Button variant="ghost" className="justify-start text-base" asChild>
+                  <Button variant="ghost" className="justify-start text-base" asChild>
                     <Link href="/admin/dashboard">Admin</Link>
                   </Button>
                   <Button variant="ghost" className="justify-start text-base" asChild>
