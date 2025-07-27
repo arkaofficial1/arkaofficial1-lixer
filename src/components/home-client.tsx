@@ -54,8 +54,7 @@ export function HomeClient({ translations }: HomeClientProps) {
 
     try {
       const result = await shortenUrl({ url: longUrl });
-      // Add the /l/ prefix for the redirect route
-      const fullShortUrl = `${window.location.host}/l/${result.shortCode}`;
+      const fullShortUrl = `${window.location.protocol}//${window.location.host}/l/${result.shortCode}`;
       setShortUrl(fullShortUrl);
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -113,7 +112,9 @@ export function HomeClient({ translations }: HomeClientProps) {
 
           {shortUrl && (
             <div className="mt-6 p-4 bg-muted/50 rounded-lg flex items-center justify-between animate-in fade-in duration-500">
-              <p className="text-primary font-mono truncate mr-4" title={shortUrl}>{shortUrl}</p>
+              <p className="text-primary font-mono truncate mr-4" title={shortUrl}>
+                {shortUrl.replace(/^(https?:\/\/)/, '')}
+              </p>
               <Button variant="ghost" size="icon" onClick={handleCopy} aria-label={translations.copyButton}>
                 <Copy className="h-5 w-5" />
               </Button>

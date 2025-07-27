@@ -32,7 +32,10 @@ export async function getLinks(): Promise<Link[]> {
         } else if (createdAt) {
           // Fallback for string or number dates if any, though less likely with serverTimestamp
            try {
-             formattedDate = format(new Date(createdAt), 'yyyy-MM-dd');
+             const d = new Date(createdAt);
+             if (!isNaN(d.getTime())) {
+                formattedDate = format(d, 'yyyy-MM-dd');
+             }
            } catch (e) {
              // Ignore if date is not valid
            }

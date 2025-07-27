@@ -27,7 +27,7 @@ export default function DashboardPage() {
     getLinks().then(setLinks);
     // Set base URL on the client side
     if (typeof window !== 'undefined') {
-        setBaseUrl(window.location.host);
+        setBaseUrl(`${window.location.protocol}//${window.location.host}`);
     }
   }, []);
 
@@ -67,7 +67,7 @@ export default function DashboardPage() {
                 </TableRow>
               ) : (
                 links.map((link) => {
-                  const shortUrl = `${baseUrl}/l/${link.shortCode}`;
+                  const shortUrl = `${baseUrl.replace(/^(https?:\/\/)/, '')}/l/${link.shortCode}`;
                   return (
                     <TableRow key={link.id}>
                       <TableCell className="font-medium truncate max-w-xs hidden md:table-cell">
@@ -77,7 +77,7 @@ export default function DashboardPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <a href={`//${shortUrl}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                          <a href={`${baseUrl}/l/${link.shortCode}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                             {shortUrl}
                           </a>
                         </div>

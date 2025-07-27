@@ -12,29 +12,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { usePathname, Link } from '@/navigation';
+import React from 'react';
 
 
 export function Header() {
   const t = useTranslations('Header');
   const pathname = usePathname();
 
-  const navLinks = (
+  const navLinks = [
+      { href: "/dashboard", label: t('dashboard') },
+      { href: "/admin/dashboard", label: "Admin" },
+      { href: "/help", label: t('help') },
+  ];
+
+  const authLinks = (
     <>
-      <Button variant="ghost" asChild>
-        <Link href="/dashboard">{t('dashboard')}</Link>
-      </Button>
-      <Button variant="ghost" asChild>
-        <Link href="/admin/dashboard">Admin</Link>
-      </Button>
-      <Button variant="ghost" asChild>
-        <Link href="/help">{t('help')}</Link>
-      </Button>
-      <Button variant="ghost" asChild>
-        <Link href="/login">{t('login')}</Link>
-      </Button>
-      <Button variant="default" asChild className="font-semibold bg-primary/90 hover:bg-primary text-primary-foreground">
-        <Link href="/signup">{t('signup')}</Link>
-      </Button>
+        <Button variant="ghost" asChild>
+            <Link href="/login">{t('login')}</Link>
+        </Button>
+        <Button variant="default" asChild className="font-semibold bg-primary/90 hover:bg-primary text-primary-foreground">
+            <Link href="/signup">{t('signup')}</Link>
+        </Button>
     </>
   );
 
@@ -62,7 +60,12 @@ export function Header() {
       <div className="container mx-auto flex justify-between items-center">
         <Logo />
         <nav className="hidden md:flex items-center gap-1">
-          {navLinks}
+          {navLinks.map(link => (
+            <Button variant="ghost" asChild key={link.href}>
+              <Link href={link.href}>{link.label}</Link>
+            </Button>
+          ))}
+          {authLinks}
           <LanguageSwitcher />
         </nav>
         <div className="md:hidden flex items-center">
@@ -80,21 +83,19 @@ export function Header() {
                    <Logo />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Button variant="ghost" className="justify-start text-base" asChild>
-                    <Link href="/dashboard">{t('dashboard')}</Link>
-                  </Button>
-                  <Button variant="ghost" className="justify-start text-base" asChild>
-                    <Link href="/admin/dashboard">Admin</Link>
-                  </Button>
-                  <Button variant="ghost" className="justify-start text-base" asChild>
-                    <Link href="/help">{t('help')}</Link>
-                  </Button>
-                  <Button variant="ghost" className="justify-start text-base" asChild>
-                    <Link href="/login">{t('login')}</Link>
-                  </Button>
-                  <Button variant="default" className="text-base" asChild>
-                    <Link href="/signup">{t('signup')}</Link>
-                  </Button>
+                 {navLinks.map(link => (
+                    <Button variant="ghost" className="justify-start text-base" asChild key={link.href}>
+                      <Link href={link.href}>{link.label}</Link>
+                    </Button>
+                  ))}
+                  <div className="border-t pt-4 mt-2 flex flex-col gap-2">
+                     <Button variant="ghost" className="justify-start text-base" asChild>
+                        <Link href="/login">{t('login')}</Link>
+                     </Button>
+                     <Button variant="default" className="text-base" asChild>
+                        <Link href="/signup">{t('signup')}</Link>
+                     </Button>
+                  </div>
                 </div>
               </div>
             </SheetContent>
