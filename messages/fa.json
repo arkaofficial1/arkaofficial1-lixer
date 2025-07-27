@@ -1,3 +1,4 @@
+
 {
   "Metadata": {
     "title": "Linxer - کوتاه کننده لینک مدرن",
@@ -14,7 +15,8 @@
     },
     "auth": {
       "login": "ورود",
-      "signup": "ثبت نام"
+      "signup": "ثبت نام",
+      "logout": "خروج"
     },
     "language": {
       "change": "تغییر زبان",

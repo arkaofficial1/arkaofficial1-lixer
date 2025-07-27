@@ -1,3 +1,4 @@
+
 {
   "Metadata": {
     "title": "Linxer - The Modern Link Shortener",
@@ -14,7 +15,8 @@
     },
     "auth": {
       "login": "Log In",
-      "signup": "Sign Up"
+      "signup": "Sign Up",
+      "logout": "Logout"
     },
     "language": {
       "change": "Change language",

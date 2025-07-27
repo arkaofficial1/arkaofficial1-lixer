@@ -1,3 +1,4 @@
+
 "use client"
 
 import {
@@ -16,8 +17,9 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import type { Link } from "./actions";
 import { getLinks } from "./actions";
+import ProtectedRoute from "@/components/protected-route"
 
-export default function DashboardPage() {
+function DashboardPageContent() {
   const [links, setLinks] = useState<Link[]>([]);
   const [baseUrl, setBaseUrl] = useState('');
   const { toast } = useToast();
@@ -111,4 +113,12 @@ export default function DashboardPage() {
       </Card>
     </div>
   )
+}
+
+export default function DashboardPage() {
+    return (
+        <ProtectedRoute>
+            <DashboardPageContent />
+        </ProtectedRoute>
+    )
 }

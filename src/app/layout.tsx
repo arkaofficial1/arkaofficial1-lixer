@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getLocale } from 'next-intl/server';
@@ -8,10 +9,11 @@ import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 import { getTranslations } from 'next-intl/server';
+import { AuthProvider } from '@/context/auth-context';
 
 
 export async function generateMetadata({ params: { locale } }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations('Metadata');
+  const t = await getTranslations({locale, namespace: 'Metadata'});
  
   return {
     title: t('title'),
@@ -38,12 +40,14 @@ export default async function RootLayout({
       </head>
       <body className="font-sans antialiased bg-background text-foreground min-h-screen flex flex-col">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Header />
-          <main className="flex-grow flex flex-col items-center justify-center p-4">
-            {children}
-          </main>
-          <Footer />
-          <Toaster />
+          <AuthProvider>
+            <Header />
+            <main className="flex-grow flex flex-col items-center justify-center p-4">
+              {children}
+            </main>
+            <Footer />
+            <Toaster />
+          </AuthProvider>
         </NextIntlClientProvider>
       </body>
     </html>
