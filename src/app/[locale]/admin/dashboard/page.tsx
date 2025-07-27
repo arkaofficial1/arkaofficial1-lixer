@@ -1,9 +1,8 @@
 "use client"
 
-import { Activity, ArrowUpRight, CreditCard, DollarSign, Users } from "lucide-react"
+import { Activity, ArrowUpRight, DollarSign, Users, Link as LinkIcon } from "lucide-react"
 import { Link } from "@/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -44,7 +43,7 @@ const RecentLinksTable = () => (
         </CardDescription>
       </div>
       <Button asChild size="sm" className="ml-auto gap-1">
-        <Link href="#">
+        <Link href="/admin/links">
           View All
           <ArrowUpRight className="h-4 w-4" />
         </Link>
@@ -147,7 +146,7 @@ export default function AdminDashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         <StatCard title="Total Revenue" value="$45,231.89" change="+20.1% from last month" icon={DollarSign} />
         <StatCard title="Users" value="+2350" change="+180.1% from last month" icon={Users} />
-        <StatCard title="Total Links" value="+12,234" change="+19% from last month" icon={Link} />
+        <StatCard title="Total Links" value="+12,234" change="+19% from last month" icon={LinkIcon} />
         <StatCard title="Total Clicks" value="+573,483" change="+201 since last hour" icon={Activity} />
       </div>
       <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
