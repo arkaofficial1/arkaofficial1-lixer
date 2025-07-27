@@ -1,7 +1,9 @@
+
 'use server';
 
 import { db } from '@/lib/firebase-admin';
 import { format } from 'date-fns';
+import { revalidatePath } from 'next/cache';
 
 export interface Link {
     originalUrl: string;
@@ -46,4 +48,15 @@ export async function getAllLinks(): Promise<LinkWithId[]> {
     console.error("Error getting all links from Firestore:", error);
     return [];
   }
+}
+
+export async function deleteLink(id: string) {
+    try {
+        await db.collection('links').doc(id).delete();
+        revalidatePath('/admin/links');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting link from Firestore:", error);
+        return { success: false, error: "Could not delete the link." };
+    }
 }

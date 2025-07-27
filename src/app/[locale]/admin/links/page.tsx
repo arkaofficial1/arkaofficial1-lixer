@@ -1,3 +1,6 @@
+
+"use client";
+
 import {
   Card,
   CardContent,
@@ -23,10 +26,33 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { getAllLinks, type LinkWithId } from "./actions"
-import { getTranslations } from 'next-intl/server';
+import { deleteLink, getAllLinks, type LinkWithId } from "./actions"
+import { useTranslations } from 'next-intl';
+import { useEffect, useState, useTransition } from "react";
+import { useToast } from "@/hooks/use-toast";
 
-async function LinkActions({ t }: { t: any }) {
+function LinkActions({ linkId, t }: { linkId: string, t: any }) {
+    const { toast } = useToast();
+    const [isPending, startTransition] = useTransition();
+
+    const handleDelete = () => {
+        startTransition(async () => {
+            const result = await deleteLink(linkId);
+            if (result.success) {
+                toast({
+                    title: "Success",
+                    description: "Link has been deleted.",
+                });
+            } else {
+                 toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: result.error || "Failed to delete link.",
+                });
+            }
+        });
+    }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,7 +65,13 @@ async function LinkActions({ t }: { t: any }) {
         <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
         <DropdownMenuItem>{t('edit')}</DropdownMenuItem>
         <DropdownMenuItem>{t('disable')}</DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive">{t('delete')}</DropdownMenuItem>
+        <DropdownMenuItem
+            className="text-destructive"
+            onClick={handleDelete}
+            disabled={isPending}
+        >
+            {t('delete')}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -69,17 +101,21 @@ function LinkRow({ link, t }: { link: LinkWithId, t: any }) {
         <Badge variant="outline">{t('statusActive')}</Badge>
       </TableCell>
       <TableCell>
-        <LinkActions t={t} />
+        <LinkActions linkId={link.id} t={t} />
       </TableCell>
     </TableRow>
   )
 }
 
 
-export default async function AdminLinksPage({ params: { locale } }: { params: { locale: string } }) {
-  const links = await getAllLinks();
-  const t = await getTranslations('AdminLinksPage');
-  const tActions = await getTranslations('AdminTableActions');
+export default function AdminLinksPage() {
+  const [links, setLinks] = useState<LinkWithId[]>([]);
+  const t = useTranslations('AdminLinksPage');
+  const tActions = useTranslations('AdminTableActions');
+
+  useEffect(() => {
+    getAllLinks().then(setLinks);
+  }, [links]); // Re-fetch when links state changes after deletion
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

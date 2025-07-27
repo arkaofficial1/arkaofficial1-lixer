@@ -1,3 +1,6 @@
+
+"use client";
+
 import {
   Card,
   CardContent,
@@ -24,10 +27,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { getTranslations } from 'next-intl/server';
+import { useTranslations } from 'next-intl';
+import { useState, useTransition } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data, to be replaced with real data from Firestore later
-const users = [
+const initialUsers = [
     {
         id: "1",
         name: "Olivia Martin",
@@ -78,9 +83,17 @@ const users = [
         status: "Active",
         createdAt: "2024-05-11"
     }
-]
+];
 
-function UserActions({ t }: { t: any }) {
+function UserActions({ userId, t, onDelete }: { userId: string, t: any, onDelete: (id: string) => void }) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleDelete = () => {
+    startTransition(() => {
+        onDelete(userId);
+    });
+  }
+  
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -93,15 +106,32 @@ function UserActions({ t }: { t: any }) {
         <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
         <DropdownMenuItem>{t('viewDetails')}</DropdownMenuItem>
         <DropdownMenuItem>{t('suspend')}</DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive">{t('delete')}</DropdownMenuItem>
+        <DropdownMenuItem 
+            className="text-destructive"
+            onClick={handleDelete}
+            disabled={isPending}
+        >
+            {t('delete')}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-export default async function AdminUsersPage({ params: { locale } }: { params: { locale: string } }) {
-  const t = await getTranslations('AdminUsersPage');
-  const tActions = await getTranslations('AdminTableActions');
+export default function AdminUsersPage() {
+  const t = useTranslations('AdminUsersPage');
+  const tActions = useTranslations('AdminTableActions');
+  const { toast } = useToast();
+  const [users, setUsers] = useState(initialUsers);
+
+  const handleDeleteUser = (userId: string) => {
+    // This is a mock deletion. In a real app, you would call a server action.
+    setUsers(prevUsers => prevUsers.filter(user => user.id !== userId));
+    toast({
+        title: "User Deleted (Mock)",
+        description: "The user has been removed from the list.",
+    });
+  }
   
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -144,13 +174,13 @@ export default async function AdminUsersPage({ params: { locale } }: { params: {
                     <Badge variant={user.role === 'Admin' ? 'default' : user.role === 'Pro' ? 'secondary' : 'outline' }>{user.role}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={user.status === 'Active' ? 'default' : 'destructive'}>{user.status}</Badge>
+                    <Badge variant={user.status === 'Active' ? 'default' : user.status === 'Suspended' ? 'destructive' : 'outline'}>{user.status}</Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     {user.createdAt}
                   </TableCell>
                   <TableCell>
-                    <UserActions t={tActions} />
+                    <UserActions userId={user.id} t={tActions} onDelete={handleDeleteUser} />
                   </TableCell>
                 </TableRow>
               ))}

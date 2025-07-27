@@ -57,21 +57,6 @@ export default async function AdminLayout({
           <div className="flex-1">
             <Nav />
           </div>
-          <div className="mt-auto p-4">
-            <Card>
-              <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>{t('upgradeCard.title')}</CardTitle>
-                <CardDescription>
-                  {t('upgradeCard.description')}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-2 pt-0 md:p-4 md:pt-0">
-                <Button size="sm" className="w-full">
-                  {t('upgradeCard.button')}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </div>
       <div className="flex flex-col">
@@ -97,21 +82,6 @@ export default async function AdminLayout({
                 </Link>
                 <Nav isMobile={true}/>
               </nav>
-              <div className="mt-auto">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{t('upgradeCard.title')}</CardTitle>
-                    <CardDescription>
-                      {t('upgradeCard.description')}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button size="sm" className="w-full">
-                       {t('upgradeCard.button')}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
