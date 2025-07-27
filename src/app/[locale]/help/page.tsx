@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button"
 
 const faqs = [
   {
-    question: "Is ShrinkRay free to use?",
-    answer: "Yes, ShrinkRay is completely free for shortening links. We offer a dashboard for registered users to manage their links, also for free."
+    question: "Is Linxer free to use?",
+    answer: "Yes, Linxer is completely free for shortening links. We offer a dashboard for registered users to manage their links, also for free."
   },
   {
     question: "Do I need to create an account to shorten links?",
@@ -21,7 +21,7 @@ const faqs = [
   },
   {
     question: "How long do the shortened links last?",
-    answer: "Shortened links created with ShrinkRay never expire. They will continue to work as long as the service is operational."
+    answer: "Shortened links created with Linxer never expire. They will continue to work as long as the service is operational."
   },
   {
     question: "Can I see how many times my link has been clicked?",
@@ -35,7 +35,7 @@ export default function HelpPage() {
       <div className="space-y-16">
         <section>
           <h2 className="text-3xl font-bold text-center mb-2">Frequently Asked Questions</h2>
-          <p className="text-center text-muted-foreground mb-8">Find answers to common questions about ShrinkRay.</p>
+          <p className="text-center text-muted-foreground mb-8">Find answers to common questions about Linxer.</p>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
               <AccordionItem value={`item-${index}`} key={index}>

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getLocale } from 'next-intl/server';
 import { Toaster } from "@/components/ui/toaster"
 import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
@@ -9,7 +9,7 @@ import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'ShrinkRay - The Modern Link Shortener',
+  title: 'Linxer - The Modern Link Shortener',
   description: 'A modern, stylish, and minimal link shortening service.',
 };
 
@@ -30,7 +30,7 @@ export default async function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-sans antialiased bg-background text-foreground min-h-screen flex flex-col">
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <Header />
           <main className="flex-grow flex flex-col items-center justify-center p-4">
             {children}
